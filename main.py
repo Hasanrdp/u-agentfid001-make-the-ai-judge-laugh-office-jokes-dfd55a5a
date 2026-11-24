@@ -20,6 +20,16 @@ def main() -> None:
         raise ValueError("joke must not be only white space")
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(text, encoding="utf-8")
+    # Post-write gate: read the file back and confirm it holds exactly
+    # the joke, non-empty and inside the 1-199 character gate, so a
+    # truncated or empty write can never pass silently.
+    written = OUTPUT_PATH.read_text(encoding="utf-8")
+    if written != text:
+        raise ValueError("written output does not match the joke")
+    if not written:
+        raise ValueError("written output is empty")
+    if not (1 <= len(written) <= 199):
+        raise ValueError(f"written output is {len(written)} characters, must be 1-199")
 
 
 if __name__ == "__main__":
